@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fetch Users</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Users List</h2>
+    <button onclick="fetchUsers()">Load Users</button>
+    <div id="users"></div>
+    <p id="loading"></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+button:hover {
+  background-color: #005a99;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  background: #f9f9f9;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+  gap: 15px;
+}
+
+.user-card img {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+function fetchUsers() {
+  const usersDiv = document.getElementById('users');
+  const loadingText = document.getElementById('loading');
+  usersDiv.innerHTML = '';
+  loadingText.textContent = 'Loading users...';
+
+  fetch('https://reqres.in/api/users?page=1')
+    .then(response => response.json())
+    .then(data => {
+      loadingText.textContent = '';
+      data.data.forEach(user => {
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+
+        userCard.innerHTML = `
+          <img src="${user.avatar}" alt="${user.first_name}" />
+          <div>
+            <strong>${user.first_name} ${user.last_name}</strong><br />
+            <small>${user.email}</small>
+          </div>
+        `;
+        usersDiv.appendChild(userCard);
+      });
+    })
+    .catch(error => {
+      loadingText.textContent = 'Failed to load users. Try again.';
+      console.error('Error fetching users:', error);
+    });
+}
